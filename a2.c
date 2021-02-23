@@ -4,15 +4,17 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#define PROGRESS_STATUS {0, 0, 0}
+//#define PROGRESS_STATUS {0, 0, 0}
 
-struct prog_stat{
+typedef struct{
     long initial_value;
     long * current_status;
     long termination_value;
-};
+} prog_stat;
+
 void* progress_monitor (void * arg) {
-   struct prog_stat *threadProg = (struct prog_stat*) arg;
+   //struct prog_stat *threadProg = (struct prog_stat*) arg;
+   prog_stat *threadProg = arg;
    int i =0;
     for(; i<threadProg->termination_value; i++)
     {
@@ -23,31 +25,36 @@ void* progress_monitor (void * arg) {
     }
     return threadProg;
 }
-int wordcount (void * arg) {
+int wordcount (void * arg, char *filedesc) {
     int iochar;
-    struct prog_stat *threadProg = (struct prog_stat*) arg;
+    
+    //struct prog_stat *threadProg = (struct prog_stat*) arg;
+    prog_stat *threadProg = arg;
     FILE *fptr;
     int i = 0;
     printf("CALLING\n");
     char str[1];
-    //fptr = fopen("sample.txt", "r");
-    
-    
-//    for(; i< threadProg->termination_value; i++)
-//     {
-//         if(fgets(str, 1, fptr) != NULL){
-//            (*threadProg->current_status)++;
-//            //printf("wordcount working : %ld\n", *(threadProg->current_status +1));
-//             }
+    fptr = fopen(filedesc, "r");
+    if(fptr != NULL){
+        printf("file opened succesfully\n");
+        for(; i< threadProg->termination_value; i++)
+        {
+            if(fgets(str, 1, fptr) != NULL)
+            {
+                (threadProg->current_status)++;
+                printf("wordcount working : %p\n" , threadProg->current_status );
+            }
         
-//    }
-    
+         } 
+    }
+    else{printf("ERROR OPENING FILE");}
     return 2;
     
 }
+
 int main (int argc, char* argv[]){
-    
-    struct prog_stat curProg = PROGRESS_STATUS;
+    prog_stat *curProg = (prog_stat*)malloc(sizeof(prog_stat));
+    //struct prog_stat curProg = PROGRESS_STATUS;
     struct stat buff;
     int initial_value = 0;
     
@@ -55,8 +62,10 @@ int main (int argc, char* argv[]){
     printf("arg array: %s\t%s\n", argv[0], argv[1]);
     if (stat(fd, &buff) == 0)
     {
-        curProg.termination_value =  buff.st_size;
-        printf("Byte Size: %ld\n", curProg.termination_value);
+        curProg->termination_value =  buff.st_size;
+        curProg->initial_value = 0;
+        curProg->current_status = 0;
+        printf("Byte Size: %ld\n", curProg->termination_value);
     }
     else
     {
@@ -67,7 +76,7 @@ int main (int argc, char* argv[]){
     pthread_t newthread;
     int *result;
     pthread_create(&newthread, NULL, progress_monitor, &curProg);
-    int iochar = wordcount(&curProg);
+    int iochar = wordcount(&curProg, argv[1]);
     pthread_join(newthread, (void *)&result);
     printf("\ncalling before seg fault\n");
     printf("THREAD DONE result=%d\nwordcount = %d\n", *result, iochar);
