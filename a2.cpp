@@ -14,21 +14,20 @@ typedef struct {
 
 void* progress_monitor (void * recArg){
     prog_stat *progbar = (prog_stat*)recArg;
-
-    printf("initial value:  %ld, termination_value %ld\n", *progbar->current_status, progbar->termination_value);
-
+   // printf("initial value:  %ld, termination_value %ld\n", progbar->initial_value, progbar->termination_value);
     long current = *progbar->current_status;
     long init = (progbar->initial_value);
     long term = progbar->termination_value;
-   //printf("current : %p\ninit : %ld\nBYTES: %ld\n", current, init, term);
-  //printf("\ndifference %ld\ncurrent : %d", &init - &term, &current);
-  
+    long fraction = progbar->termination_value/50;
+    printf("fraction : %ld\n",fraction);
    long i = 0;
-    for(; i < term; i++)
+    while(*progbar->current_status < term)
     {
-        usleep(250000);
-        printf("-");
+        
+        
+        printf("-%ld", *progbar->current_status);
        // printf("\n%ld\n",*progbar->current_status);
+      
         fflush(stdout);
         //printf("My Turn %ld\t%p\t%ld\t%ld\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
     }
@@ -38,8 +37,6 @@ int wordcount (char *filedesc) {
     struct stat buff;
     char *fd = filedesc;
     printf("file to be read: %s\n", filedesc);
-
-
     prog_stat *threadProg = new prog_stat;
     threadProg->current_status = new long;
 
@@ -77,10 +74,8 @@ int wordcount (char *filedesc) {
     pthread_create(&newthread, NULL, &progress_monitor, (void *)threadProg);
 
     while((iochar = fgetc((FILE*)fptr)) != EOF){
-        printf("ANOTHER ITR\n");
         
         (*threadProg->current_status)++;
-        printf("worcount: %ld\n", *threadProg->current_status);
         
     }
     
