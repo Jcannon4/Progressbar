@@ -26,7 +26,6 @@ void* progress_monitor (void * recArg){
    long i = 0;
     for(; i < term; i++)
     {
-        
         usleep(250000);
         printf("-");
        // printf("\n%ld\n",*progbar->current_status);
