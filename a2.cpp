@@ -1,4 +1,8 @@
 //Jaxon
+
+#define whiteSpace ' '
+#define newline '\n'
+#define tab '\t'
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -77,12 +81,30 @@ int wordcount (char *filedesc) {
     pthread_attr_init(&pthread_attributes);
     pthread_create(&newthread, NULL, &progress_monitor, (void *)threadProg);
 
+    int wCount = 0;
+    
+
+    int charcount = 0;
     while((iochar = fgetc((FILE*)fptr)) != EOF){
-        printf("ANOTHER ITR\n");
+        //printf("ANOTHER ITR\n");
+        if (iochar == whiteSpace || iochar == newline || iochar == tab){
+            if(charcount != 0)
+            { 
+                wCount++;
+            }
+            charcount = 0;
+            printf("count1 = %d\n", wCount);
+        }
+        else { 
+            charcount++;
+        }
         
         (*threadProg->current_status)++;
-        printf("worcount: %ld\n", *threadProg->current_status);
+        printf("charcount: %ld\n", *threadProg->current_status);
         
+    }
+    if(iochar == EOF){
+
     }
     
     pthread_join(newthread, NULL);
