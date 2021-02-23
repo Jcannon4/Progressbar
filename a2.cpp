@@ -24,12 +24,11 @@ void* progress_monitor (void * recArg){
     long term = progbar->termination_value;
     long fraction = progbar->termination_value/50;
     printf("fraction : %ld\n",fraction);
-   long i = 0;
+    long i = 0;
     while(*progbar->current_status < term)
     {
         
-        
-        printf("-%ld", *progbar->current_status);
+        //printf("-%ld", *progbar->current_status);
        // printf("\n%ld\n",*progbar->current_status);
       
         fflush(stdout);
@@ -89,28 +88,30 @@ int wordcount (char *filedesc) {
                 wCount++;
             }
             charcount = 0;
-            printf("count1 = %d\n", wCount);
+            //printf("count1 = %d\n", wCount);
         }
         else { 
             charcount++;
         }
         
         (*threadProg->current_status)++;
-        printf("charcount: %ld\n", *threadProg->current_status);
+        //printf("charcount: %ld\n", *threadProg->current_status);
         
     }
-    if(iochar == EOF){
+    if(iochar == EOF && charcount !=0 ){
+        charcount = 0;
+        wCount++;
 
     }
     
     pthread_join(newthread, NULL);
-    return 4;
+    return wCount;
     
 }
 
 int main (int argc, char* argv[]){
      int count = wordcount(argv[1]);
-     printf("ending statement\nword count = %d", count);
+     printf("ending statement\nword count = %d\n", count);
     return 0;
     
 }
