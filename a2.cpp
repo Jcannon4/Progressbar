@@ -29,10 +29,23 @@ void* progress_monitor (void * recArg){
     //printf("LAST TERM CHECK : %f\n", threshold);
     while(*progbar->current_status <= term && perTick < 51)
     {
-        //printf("CURPROG : %ld\n", *progbar->current_status);
-        float fraction = *progbar->current_status * 1.0 / (progbar->termination_value);
-        //printf("FRACTION : %f\t", fraction);
-        //printf("fraction : %f\n", fraction);
+       float fraction;
+        if(progbar->termination_value == 0){
+            int i = 1;
+            fraction = 0;
+            for(; i < 51; i++){
+                if(i%10 == 0){
+                    usleep(25000);
+                    printf("+");
+                } else{usleep(25000);printf("-");}
+                
+            }
+            break;
+        } else {
+           fraction = *progbar->current_status * 1.0 / (progbar->termination_value);
+            }
+
+    
         if(fraction >= (threshold * perTick)){
             if(perTick%10 == 0)
             {
@@ -120,7 +133,6 @@ int wordcount (char *filedesc) {
     if(iochar == EOF && charcount !=0 ){
         charcount = 0;
         wCount++;
-
     }
     
     pthread_join(newthread, NULL);
