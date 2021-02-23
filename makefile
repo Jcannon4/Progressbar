@@ -1,7 +1,11 @@
-CXX=gcc
+CXX=g++
+CXXFLAGS= -std=c++11
+LDFLAGS = -pthread
 
-CXXFLAGS= -std=c99 -g
+SRC = a2.cpp
+OBJ = $(SRC:.cpp=.o)
+EXEC = a2
 
-mypb :  
-
-	$(CXX) $(CXXFLAGS) -o mypb a2.c 
+make : $(EXEC)
+$(EXEC) : $(OBJ)
+		$(CXX) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)

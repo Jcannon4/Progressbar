@@ -1,0 +1,98 @@
+//Jaxon
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <sys/stat.h>
+//#define PROGRESS_STATUS {0, 0, 0}
+
+typedef struct {
+    long initial_value;
+    long * current_status;
+    long termination_value;
+} prog_stat;
+
+void* progress_monitor (void * recArg){
+    prog_stat *progbar = (prog_stat*)recArg;
+
+    printf("initial value:  %ld, termination_value %ld\n", *progbar->current_status, progbar->termination_value);
+
+    long current = *progbar->current_status;
+    long init = (progbar->initial_value);
+    long term = progbar->termination_value;
+   //printf("current : %p\ninit : %ld\nBYTES: %ld\n", current, init, term);
+  //printf("\ndifference %ld\ncurrent : %d", &init - &term, &current);
+  
+   long i = 0;
+    for(; i < term; i++)
+    {
+        
+        usleep(250000);
+        printf("-");
+       // printf("\n%ld\n",*progbar->current_status);
+        fflush(stdout);
+        //printf("My Turn %ld\t%p\t%ld\t%ld\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
+    }
+    return progbar;
+}
+int wordcount (char *filedesc) {
+    struct stat buff;
+    char *fd = filedesc;
+    printf("file to be read: %s\n", filedesc);
+
+
+    prog_stat *threadProg = new prog_stat;
+    threadProg->current_status = new long;
+
+    if (stat(fd, &buff) == 0)
+    {
+        threadProg->termination_value =  buff.st_size;
+        threadProg->initial_value = 0;
+        *threadProg->current_status = 0;
+        printf("Byte Size: %ld\n", threadProg->termination_value);
+    }
+    else
+    {
+        printf("File not found\n");
+        printf("Check that file : '%s' file exists.\n", filedesc);
+        exit(2);
+    }
+    printf("BYTE SIZE CHECK : %ld\n", threadProg->termination_value);
+
+    pthread_t newthread;
+    pthread_attr_t	pthread_attributes;
+    FILE *fptr;
+    fptr = fopen(filedesc, "r");
+    long i = 0;
+    char str[255];
+
+    // long *current;
+    // current = (long *)malloc(sizeof(threadProg->current_status));
+    //long *current = threadProg->current_status;
+    long init = threadProg->initial_value;
+    long term = threadProg->termination_value;
+    printf("current : %ld\ninit : %ld\nBYTES: %ld\n", *threadProg->current_status, init, term);
+    int *result;
+    int iochar;
+    pthread_attr_init(&pthread_attributes);
+    pthread_create(&newthread, NULL, &progress_monitor, (void *)threadProg);
+
+    while((iochar = fgetc((FILE*)fptr)) != EOF){
+        printf("ANOTHER ITR\n");
+        
+        (*threadProg->current_status)++;
+        printf("worcount: %ld\n", *threadProg->current_status);
+        
+    }
+    
+    pthread_join(newthread, NULL);
+    return 4;
+    
+}
+
+int main (int argc, char* argv[]){
+     int count = wordcount(argv[1]);
+     printf("ending statement\nword count = %d", count);
+    return 0;
+    
+}
