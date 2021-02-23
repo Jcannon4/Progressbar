@@ -25,15 +25,23 @@ void* progress_monitor (void * recArg){
     long fraction = progbar->termination_value/50;
     printf("fraction : %ld\n",fraction);
     long i = 0;
+    int perTick = 1;
+    int prevTick = 1;
+    
     while(*progbar->current_status < term)
     {
-        
-        //printf("-%ld", *progbar->current_status);
+        if(*progbar->current_status >= ((fraction*perTick) && (*progbar->current_status <= fraction*perTick++))){
+                
+        printf("-%ld", *progbar->current_status);
        // printf("\n%ld\n",*progbar->current_status);
       
         fflush(stdout);
         //printf("My Turn %ld\t%p\t%ld\t%ld\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
+        perTick++;
+        }
+        
     }
+
     return progbar;
 }
 int wordcount (char *filedesc) {
