@@ -2,6 +2,6 @@ CXX=gcc
 
 CXXFLAGS= -std=c99 -g
 
-myls :  
+mypb :  
 
-	$(CXX) $(CXXFLAGS) -o myls a1.c 
+	$(CXX) $(CXXFLAGS) -o mypb a2.c 
