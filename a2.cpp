@@ -22,35 +22,47 @@ void* progress_monitor (void * recArg){
     long current = *progbar->current_status;
     long init = (progbar->initial_value);
     long term = progbar->termination_value;
-    long fraction = progbar->termination_value/50;
-    printf("fraction : %ld\n",fraction);
     long i = 0;
+    float threshold = 1.0 / 50.0;
     int perTick = 1;
-    int prevTick = 1;
-    
-    while(*progbar->current_status < term)
+    int prevTick = 0;
+    //printf("LAST TERM CHECK : %f\n", threshold);
+    while(*progbar->current_status <= term && perTick < 51)
     {
-        if(*progbar->current_status >= ((fraction*perTick) && (*progbar->current_status <= fraction*perTick++))){
-                
-        printf("-%ld", *progbar->current_status);
+        //printf("CURPROG : %ld\n", *progbar->current_status);
+        float fraction = *progbar->current_status * 1.0 / (progbar->termination_value);
+        //printf("FRACTION : %f\t", fraction);
+        //printf("fraction : %f\n", fraction);
+        if(fraction >= (threshold * perTick)){
+            if(perTick%10 == 0)
+            {
+            usleep(25000);
+            printf("+");
+            }else{
+            usleep(25000);
+            printf("-");
+            }
        // printf("\n%ld\n",*progbar->current_status);
       
         fflush(stdout);
         //printf("My Turn %ld\t%p\t%ld\t%ld\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
         perTick++;
+
         }
         
     }
-
+    printf("\n");
     return progbar;
 }
 int wordcount (char *filedesc) {
     struct stat buff;
     char *fd = filedesc;
-    printf("file to be read: %s\n", filedesc);
     prog_stat *threadProg = new prog_stat;
     threadProg->current_status = new long;
-
+    if(filedesc == NULL){
+        printf("no file specified\n");
+        exit(10);
+    }
     if (stat(fd, &buff) == 0)
     {
         threadProg->termination_value =  buff.st_size;
@@ -60,8 +72,7 @@ int wordcount (char *filedesc) {
     }
     else
     {
-        printf("File not found\n");
-        printf("Check that file : '%s' file exists.\n", filedesc);
+        printf("could not open file\n");
         exit(2);
     }
     printf("BYTE SIZE CHECK : %ld\n", threadProg->termination_value);
@@ -119,7 +130,7 @@ int wordcount (char *filedesc) {
 
 int main (int argc, char* argv[]){
      int count = wordcount(argv[1]);
-     printf("ending statement\nword count = %d\n", count);
+     printf("There are %d words in %s.\n", count, argv[1]);
     return 0;
     
 }
