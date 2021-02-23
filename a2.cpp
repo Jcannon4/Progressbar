@@ -1,14 +1,20 @@
-//Jaxon
-
-#define whiteSpace ' '
-#define newline '\n'
-#define tab '\t'
+/*  Jackson Contreras : 820436208 : cssc3511
+*   Ahmet Gueye : : 
+*   Professor Shen 
+*   CS570-Operating Systems
+*   02/23/2021
+*   Assignment #2 "Poor Man's Progress Bar"
+*
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/stat.h>
-//#define PROGRESS_STATUS {0, 0, 0}
+#define whiteSpace ' '
+#define newline '\n'
+#define tab '\t'
+
 
 typedef struct {
     long initial_value;
@@ -44,8 +50,6 @@ void* progress_monitor (void * recArg){
         } else {
            fraction = *progbar->current_status * 1.0 / (progbar->termination_value);
             }
-
-    
         if(fraction >= (threshold * perTick)){
             if(perTick%10 == 0)
             {
@@ -55,10 +59,7 @@ void* progress_monitor (void * recArg){
             usleep(25000);
             printf("-");
             }
-       // printf("\n%ld\n",*progbar->current_status);
-      
         fflush(stdout);
-        //printf("My Turn %ld\t%p\t%ld\t%ld\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
         perTick++;
 
         }
