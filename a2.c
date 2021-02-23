@@ -7,58 +7,70 @@
 #define PROGRESS_STATUS {0, 0, 0}
 
 struct prog_stat{
-    int initial_value;
-    int * current_status;
-    int termination_value;
+    long initial_value;
+    long * current_status;
+    long termination_value;
 };
 void* progress_monitor (void * arg) {
-   struct prog_stat *threadProg = (struct prog_stat*) malloc(sizeof(arg));
+   struct prog_stat *threadProg = (struct prog_stat*) arg;
    int i =0;
-    for(; i<1; i++)
+    for(; i<threadProg->termination_value; i++)
     {
-        sleep(1);
-        printf("My Turn %d\t%p\t%d\t%d\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
+        usleep(250000);
+        printf("-");
+        fflush(stdout);
+        //printf("My Turn %ld\t%p\t%ld\t%ld\n",i, (void *)threadProg->current_status , threadProg->initial_value, threadProg->termination_value);
     }
     return threadProg;
 }
-void* wordcount (void * arg) {
+int wordcount (void * arg) {
+    int iochar;
+    struct prog_stat *threadProg = (struct prog_stat*) arg;
     FILE *fptr;
     int i = 0;
-    fptr = fopen("sample.txt", "r");
-    if(fptr == NULL){
-        printf("OPENING FILE ERROR");
-        exit(1);
-    }
-    for(; i< 1; i++)
-    {
-        sleep(1);
-        printf("next thread %d\n", i);
-    }
-    return NULL;
+    printf("CALLING\n");
+    char str[1];
+    //fptr = fopen("sample.txt", "r");
+    
+    
+//    for(; i< threadProg->termination_value; i++)
+//     {
+//         if(fgets(str, 1, fptr) != NULL){
+//            (*threadProg->current_status)++;
+//            //printf("wordcount working : %ld\n", *(threadProg->current_status +1));
+//             }
+        
+//    }
+    
+    return 2;
     
 }
-int main (){
+int main (int argc, char* argv[]){
+    
     struct prog_stat curProg = PROGRESS_STATUS;
     struct stat buff;
     int initial_value = 0;
-    char *fd = "sample.txt";
+    
+    char *fd = argv[1];
+    printf("arg array: %s\t%s\n", argv[0], argv[1]);
     if (stat(fd, &buff) == 0)
     {
         curProg.termination_value =  buff.st_size;
-        printf("Byte Size: %d\n", curProg.termination_value);
+        printf("Byte Size: %ld\n", curProg.termination_value);
     }
     else
     {
         printf("File not found\n");
-        printf("Check that '%s' file exists.\n", "sample.txt");
+        printf("Check that file : '%s' file exists.\n", argv[1]);
+        exit(2);
     }
     pthread_t newthread;
     int *result;
     pthread_create(&newthread, NULL, progress_monitor, &curProg);
-    wordcount(&curProg);
+    int iochar = wordcount(&curProg);
     pthread_join(newthread, (void *)&result);
-    printf("calling before seg fault\n");
-    printf("THREAD DONE result=%d\n", *result);
+    printf("\ncalling before seg fault\n");
+    printf("THREAD DONE result=%d\nwordcount = %d\n", *result, iochar);
     return 0;
     
 }
