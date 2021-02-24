@@ -1,11 +1,15 @@
 CXX=g++
-CXXFLAGS= -std=c++11
-LDFLAGS = -pthread
+CXXFLAGS= -std=c++11 -g
+# LDFLAGS = -pthread
 
-SRC = a2.cpp
-OBJ = $(SRC:.cpp=.o)
-EXEC = a2
+# SRC = wordcount.cpp
+# OBJ = $(SRC:.cpp=.o)
+# EXEC = wordcount
 
-make : $(EXEC)
-$(EXEC) : $(OBJ)
-		$(CXX) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+# make : $(EXEC)
+# $(EXEC) : $(OBJ)
+# 		$(CXX) $(LDFLAGS) -o $@ $(OBJ) $(LBLIBS)
+
+wordcount :
+			$(CXX) $(CXXFLAGS) -o wordcount a2.cpp
+
