@@ -1,12 +1,9 @@
 # Progressbar
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-MASTER BRANCH
-Do NOT commit here, we will do that at the end :)
+
 =======
+Progress Bar utilizing threading with C++
 Jackson's branch. Feel free to cop/paste to your branch or use git commands. which ever your preference is
->>>>>>> Jax
 =======
 This is assignment 2 for SDSU cs570. The purpose is to create a progress bar
 using POSIX threads.
