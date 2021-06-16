@@ -3,10 +3,9 @@
 
 =======
 Progress Bar utilizing threading with C++
-Jackson's branch. Feel free to cop/paste to your branch or use git commands. which ever your preference is
+The purpose is to create a progress bar
+using POSIX threads
 =======
-This is assignment 2 for SDSU cs570. The purpose is to create a progress bar
-using POSIX threads.
 
 a2.cpp
 main : Takes one file as an argument to read the amount of words in it.
